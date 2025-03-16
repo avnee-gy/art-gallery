@@ -1,7 +1,5 @@
 import "./AddressModal.css";
-import React from "react";
-
-import { useState } from "react";
+import React, { useState } from "react";
 import { addAddressService } from "../../../../services/address-services/addAddressService";
 import { useUserData } from "../../../../contexts/UserDataProvider.js";
 import { updateAddressService } from "../../../../services/address-services/updateAddressService";
@@ -11,19 +9,9 @@ import { useAuth } from "../../../../contexts/AuthProvider.js";
 
 export const AddressModal = () => {
   const [, setLoading] = useState(false);
-  const [, setError] = useState("false");
+  const [, setError] = useState(false);
   const { auth } = useAuth();
   const { dispatch } = useUserData();
-
-  const dummyAddress = {
-    name: "Aniket Saini",
-    street: "66/6B Main Post Office",
-    city: "Roorkee",
-    state: "Uttarakhand",
-    country: "India",
-    pincode: "247667",
-    phone: "963-906-0737",
-  };
 
   const {
     setIsAddressModalOpen,
@@ -33,38 +21,83 @@ export const AddressModal = () => {
     setIsEdit,
   } = useAddress();
 
-  const updateAddress = async (address) => {
-    try {
-      setLoading(true);
-      setError("");
-      const response = await updateAddressService(address, auth.token);
-      if (response.status === 200) {
-        console.log("edit address", response);
-        setLoading(false);
-        toast.success(` ${address.name}'s address updated successfully!`);
-        dispatch({ type: "SET_ADDRESS", payload: response.data.addressList });
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error(error);
-    } finally {
-      setLoading(false);
+  // Validation Function
+  const validateForm = () => {
+    const nameRegex = /^[a-zA-Z\s]{3,}$/;
+    const streetRegex = /^.{5,}$/;
+    const cityStateCountryRegex = /^[a-zA-Z\s]{3,}$/;
+    const pincodeRegex = /^\d{6}$/;
+    const phoneRegex = /^[0-9\-]{10,}$/;
+
+    if (!nameRegex.test(addressForm.name)) {
+      toast.error("Name must be at least 3 characters and contain only letters.");
+      return false;
     }
+    if (!streetRegex.test(addressForm.street)) {
+      toast.error("Street must be at least 5 characters long.");
+      return false;
+    }
+    if (!cityStateCountryRegex.test(addressForm.city)) {
+      toast.error("City must contain only letters and be at least 3 characters.");
+      return false;
+    }
+    if (!cityStateCountryRegex.test(addressForm.state)) {
+      toast.error("State must contain only letters and be at least 3 characters.");
+      return false;
+    }
+    if (!cityStateCountryRegex.test(addressForm.country)) {
+      toast.error("Country must contain only letters and be at least 3 characters.");
+      return false;
+    }
+    if (!pincodeRegex.test(addressForm.pincode)) {
+      toast.error("Pincode must be exactly 6 digits.");
+      return false;
+    }
+    if (!phoneRegex.test(addressForm.phone)) {
+      toast.error("Phone number must be 10 digits.");
+      return false;
+    }
+
+    return true;
   };
 
-  const addAddress = async (address) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
     try {
       setLoading(true);
       setError("");
-      const response = await addAddressService(address, auth.token);
-      if (response.status === 201) {
-        setLoading(false);
-        toast.success("New address added successfully!");
-        dispatch({ type: "SET_ADDRESS", payload: response.data.addressList });
+
+      if (isEdit) {
+        const response = await updateAddressService(addressForm, auth.token);
+        if (response.status === 200) {
+          toast.success(`Address updated successfully!`);
+          dispatch({ type: "SET_ADDRESS", payload: response.data.addressList });
+        }
+      } else {
+        const response = await addAddressService(addressForm, auth.token);
+        if (response.status === 201) {
+          toast.success("New address added successfully!");
+          dispatch({ type: "SET_ADDRESS", payload: response.data.addressList });
+        }
       }
+
+      setIsAddressModalOpen(false);
+      setIsEdit(false);
+      setAddressForm({
+        name: "",
+        street: "",
+        city: "",
+        state: "",
+        country: "",
+        pincode: "",
+        phone: "",
+      });
+
     } catch (error) {
-      setLoading(false);
       console.error(error);
+      toast.error("Something went wrong!");
     } finally {
       setLoading(false);
     }
@@ -74,39 +107,7 @@ export const AddressModal = () => {
     <div className="address-modal-container">
       <div className="address-input-container">
         <h1>Address Form</h1>
-        <form
-          onSubmit={(e) => {
-            if (!isEdit) {
-              e.preventDefault();
-              addAddress(addressForm);
-              setAddressForm({
-                name: "",
-                street: "",
-                city: "",
-                state: "",
-                country: "",
-                pincode: "",
-                phone: "",
-              });
-              setIsAddressModalOpen(false);
-            } else {
-              e.preventDefault();
-              updateAddress(addressForm);
-              setAddressForm({
-                name: "",
-                street: "",
-                city: "",
-                state: "",
-                country: "",
-                pincode: "",
-                phone: "",
-              });
-              setIsAddressModalOpen(false);
-              setIsEdit(false);
-            }
-          }}
-          className="input-container"
-        >
+        <form onSubmit={handleSubmit} className="input-container">
           <input
             name="name"
             value={addressForm.name}
@@ -117,8 +118,9 @@ export const AddressModal = () => {
             placeholder="Enter Name"
           />
           <input
-            required
+            name="street"
             value={addressForm.street}
+            required
             onChange={(e) =>
               setAddressForm({ ...addressForm, street: e.target.value })
             }
@@ -126,8 +128,8 @@ export const AddressModal = () => {
           />
           <input
             name="city"
-            required
             value={addressForm.city}
+            required
             onChange={(e) =>
               setAddressForm({ ...addressForm, city: e.target.value })
             }
@@ -135,8 +137,8 @@ export const AddressModal = () => {
           />
           <input
             name="state"
-            required
             value={addressForm.state}
+            required
             onChange={(e) =>
               setAddressForm({ ...addressForm, state: e.target.value })
             }
@@ -168,7 +170,6 @@ export const AddressModal = () => {
               setAddressForm({ ...addressForm, phone: e.target.value })
             }
             placeholder="Enter Phone"
-            minLength="8"
           />
           <input className="submit" type="submit" value="Save" />
         </form>
@@ -176,7 +177,15 @@ export const AddressModal = () => {
           <button onClick={() => setIsAddressModalOpen(false)}>Cancel</button>
           <button
             onClick={() => {
-              setAddressForm({ ...dummyAddress });
+              setAddressForm({
+                name: "Aniket Saini",
+                street: "66/6B Main Post Office",
+                city: "Roorkee",
+                state: "Uttarakhand",
+                country: "India",
+                pincode: "247667",
+                phone: "9639060737",
+              });
             }}
           >
             Add Dummy Data

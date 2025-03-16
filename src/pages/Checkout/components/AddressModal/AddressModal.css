@@ -11,10 +11,11 @@
   inset: 0;
   background-color: rgb(255, 255, 255);
   margin: auto;
-  width: 290px;
-  height: 520px;
+  width: 330px;
+  height: 540px;
   text-align: center;
-  border-radius: 10px;
+  padding: 10px;
+  /* border-radius: 10px; */
 }
 
 .address-input-container h1 {
@@ -30,6 +31,14 @@
   margin: 12px auto;
   border: 1px solid rgb(226, 226, 226);
   border-radius: 5px;
+}
+
+.input-container {
+  display: block;
+  align-items: center;
+  border: 0px;
+  padding: auto 10px;
+
 }
 
 .address-modal-container .submit {
