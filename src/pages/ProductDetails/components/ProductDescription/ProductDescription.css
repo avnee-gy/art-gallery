@@ -140,3 +140,11 @@
     margin-bottom: 30px;
   }
 }
+
+@media (max-width: 768px) {
+  .products-page-container .product-details-description {
+    line-height: 25px;
+    margin-top: 5%;
+    margin-bottom: 10%;
+  }
+}
