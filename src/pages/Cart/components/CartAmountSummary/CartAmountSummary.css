@@ -44,6 +44,67 @@
   color: rgb(55, 134, 18);
 }
 
+.place-order-btn {
+  padding: 1.1rem 3.5rem;
+  font-weight: bold;
+  font-size: 1.5rem;
+  background: transparent;
+  border: none;
+  position: relative;
+  align-self: center;
+  justify-self: stretch;
+  z-index: 1;
+  color: black;
+  transition: color 0.3s ease-in-out;
+}
+
+.place-order-btn::before,
+.place-order-btn::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  transition: all 0.3s ease-in-out;
+}
+
+.place-order-btn::before {
+  width: 100%;
+  height: 100%;
+  background: #fff; 
+  border-radius: 8px;
+  border: 1px solid #1e1e1e99;
+}
+
+.place-order-btn::after {
+  width: 8px;
+  height: 8px;
+  background: #999;
+  border-radius: 8px;
+  transform: translate(0, 0);
+}
+
+.place-order-btn:hover {
+  color: white;
+}
+
+.place-order-btn:hover::before {
+  width: 10px;
+  height: 10px;
+  background: #dcdcdc;
+}
+
+.place-order-btn:hover::after {
+  width: 100%;
+  height: 100%;
+  background: #555; 
+}
+
+.place-order-btn:active::after {
+  transition: 0s;
+  transform: translate(0, 5%);
+}
+
 @media (min-width: 768px) {
   .cart-price-container {
     width: 50vw;

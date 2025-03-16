@@ -1,11 +1,11 @@
 import React from "react";
 import { useUserData } from "../../../../contexts/UserDataProvider.js";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./CartAmountSummary.css";
 
 export const CartAmountSummary = ({ couponSelected }) => {
   const { userDataState, dispatch } = useUserData();
-
+  const navigate = useNavigate();
   const totalDiscountedPriceBeforeCoupon = userDataState.cartProducts?.reduce(
     (acc, curr) => acc + curr.discounted_price * curr.qty,
     0
@@ -40,6 +40,7 @@ export const CartAmountSummary = ({ couponSelected }) => {
         orderAddress: userDataState.addressList[0],
       },
     });
+    navigate("/checkout");
   };
 
   return (
@@ -75,9 +76,9 @@ export const CartAmountSummary = ({ couponSelected }) => {
         </span>
       </div>
 
-      <Link onClick={placeOrderHandler} to="/checkout">
+      <button onClick={placeOrderHandler} className="place-order-btn">
         Place Order
-      </Link>
+      </button>
     </div>
   );
 };
