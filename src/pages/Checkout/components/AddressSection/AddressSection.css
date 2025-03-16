@@ -10,11 +10,18 @@
   border-radius: 10px;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: baseline;
 }
 .address-container .address-card .name {
   margin-bottom: 5px;
   font-size: larger;
+}
+
+.address-details{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .address-container .address-card .address {
@@ -52,6 +59,22 @@
   border: none;
   border-radius: 6px;
 }
+
+.delete-address-btn {
+  background: none;
+  border: none;
+  color: black;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: color 0.2s ease-in-out;
+}
+
+.delete-address-btn:hover {
+  color: black;
+  cursor: pointer;
+}
+
 
 .address-btns button:hover {
   cursor: pointer;
